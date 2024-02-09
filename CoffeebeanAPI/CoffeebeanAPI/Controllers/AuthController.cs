@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Claims;
 
 
 
@@ -30,39 +31,38 @@ namespace CoffeebeanAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody]string email, string password)
+        public async Task<IActionResult> Login([FromBody] LoginInput login)
         {
-            User myUser = await _mongoUserService.GetByEmail(email, password);
-            if (BCrypt.Net.BCrypt.Verify(password, myUser.Password))
+            User myUser = await _mongoUserService.GetByEmail(login.email);
+            if (myUser != null)
             {
-                return Ok(myUser);
+                if (BCrypt.Net.BCrypt.Verify(login.password, myUser.Password))
+                {
+
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Email, login.email),
+                        new Claim(ClaimTypes.Role, myUser.UserRole.ToString()) // Adding role claim
+                    };
+
+                    var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
+                      _config["Jwt:Issuer"],
+                      claims,
+                      expires: DateTime.Now.AddMinutes(120),
+                      signingCredentials: credentials);
+
+                    var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
+
+                    return Ok(token);
+                }
+
             }
-            else
-            {
-                return Unauthorized();
-            }
+
+            return Unauthorized(new { fail = "Email or Password was incorrect." });
+
         }
-
-        /*[HttpPost]
-        public IActionResult Post(string email, string password);
-        {
-            //LoginRequest loginRequest
-            //your logic for login process
-            //If login usrename and password are correct then proceed to generate token
-            User myUser = await _mongoUserService.Login(email, password);
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Issuer"],
-              null,
-              expires: DateTime.Now.AddMinutes(120),
-              signingCredentials: credentials);
-
-            var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
-
-            return Ok(token);
-        }*/
     }
 }

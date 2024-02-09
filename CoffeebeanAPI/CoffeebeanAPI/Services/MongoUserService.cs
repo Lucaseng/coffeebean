@@ -21,7 +21,7 @@ namespace CoffeebeanAPI.Services
         }
 
 
-        public async Task<User> GetByEmail(string email, string password)
+        public async Task<User> GetByEmail(string email)
         {
 
             return await _userCollection.Find(x => x.Email == email).FirstOrDefaultAsync();            

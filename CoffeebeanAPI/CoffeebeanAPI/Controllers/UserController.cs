@@ -2,6 +2,8 @@
 using CoffeebeanAPI.Services;
 using CoffeebeanAPI.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
+
 
 namespace CoffeebeanAPI.Controllers
 {
@@ -38,7 +40,7 @@ namespace CoffeebeanAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(UserInput user)
         {
-            User myUser = new User { FirstName = user.FirstName, LastName = user.LastName, Email = user.Email, Password = user.Password };
+            User myUser = new User { FirstName = user.FirstName, LastName = user.LastName, Email = user.Email, Password = BCrypt.Net.BCrypt.HashPassword(user.Password)};
             await _mongoUserService.PostAsync(myUser);
             return CreatedAtAction(nameof(Get), new { myUser.Id }, myUser);
 

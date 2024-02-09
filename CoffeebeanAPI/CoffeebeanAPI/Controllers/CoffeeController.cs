@@ -47,7 +47,7 @@ namespace CoffeebeanAPI.Controllers
             Coffee myCoffee = await _mongoDBService.GetOneAsync(coffee.Name);
             if (myCoffee != null)
             {
-                return BadRequest(string.Format("{0} already exists in the database!", coffee.Name));
+                return BadRequest(new { fail = string.Format("{0} already exists in the database!", coffee.Name) });
 
             }
             myCoffee = new Coffee { Name = coffee.Name };

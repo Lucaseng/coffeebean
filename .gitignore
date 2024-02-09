@@ -6,3 +6,9 @@ CoffeebeanAPI/CoffeebeanAPI/bin/
 CoffeebeanAPI/CoffeebeanAPI/obj/
 
 CoffeebeanAPI/CoffeebeanAPI/Properties/
+
+CoffeebeanAPI/CoffeebeanAPI/appsettings.Development.json
+
+CoffeebeanAPI/CoffeebeanAPI/appsettings.json
+
+CoffeebeanAPI/CoffeebeanAPI/CoffeebeanAPI.csproj.user

@@ -25,6 +25,13 @@ namespace CoffeebeanAPI.Controllers
             return Ok(myShops);
         }
 
+        [HttpGet("/{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            CoffeeShop myShop = await _mongoDBService.GetShopById(id);
+            return Ok(myShop);
+        }
+
         [HttpPost]
 
         public async Task<IActionResult> AddShop(CoffeeShopInput myShop)
@@ -42,6 +49,19 @@ namespace CoffeebeanAPI.Controllers
             //ADD TO DATABASE
             await _mongoDBService.PostShop(shop);
             return CreatedAtAction(nameof(Get), new { shop.Id }, shop);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteShop(string id)
+        {
+            //Check if Shop Exists
+            CoffeeShop myShop = await _mongoDBService.GetShopById(id);
+            if (myShop == null)
+            {
+                return BadRequest(new { Fail = string.Format("id {0} does not exist!", id) });
+            }
+            await _mongoDBService.DeleteShop(myShop);
+            return Ok(new {Success = string.Format("Shop with id {0} successfully deleted.", id)});
         }
 
 

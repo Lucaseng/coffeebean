@@ -1,4 +1,5 @@
-﻿using CoffeebeanAPI.Dtos;
+﻿using Amazon.Runtime.SharedInterfaces;
+using CoffeebeanAPI.Dtos;
 using CoffeebeanAPI.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -33,6 +34,13 @@ namespace CoffeebeanAPI.Services
 
         }
 
+        public async Task<CoffeeShop> GetShopById(string id)
+        {
+            var builder = Builders<CoffeeShop>.Filter;
+            var filter = builder.Eq("_id", ObjectId.Parse(id));
+            return await _shopCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
         public List<string> ConvertObjectIdsToString(List<ObjectId> ids)
         {
             List<string> outputIds = new List<string> { };
@@ -47,6 +55,14 @@ namespace CoffeebeanAPI.Services
         {
             await _shopCollection.InsertOneAsync(shop);
             return;
+        }
+
+        public async Task DeleteShop(CoffeeShop myShop)
+        {
+            //await _shopCollection.FindOneAndDeleteAsync(x => x.Id == myShop.Id);
+            await _shopCollection.DeleteOneAsync(Builders<CoffeeShop>.Filter.Eq("_id", ObjectId.Parse(myShop.Id)));
+            return;
+
         }
 
 

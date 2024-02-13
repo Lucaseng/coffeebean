@@ -8,6 +8,8 @@ namespace CoffeebeanAPI.Models
         public string UserCollectionName { get; set; } = null!;
         public string ShopCollectionName { get; set; } = null!;
 
+        public string ReviewCollectionName { get; set; } = null!;
+
     }
 
 }

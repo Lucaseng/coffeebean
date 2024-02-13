@@ -37,6 +37,11 @@ namespace CoffeebeanAPI.Services
             return await _coffeeCollection.Find(x => x.Name == name).FirstOrDefaultAsync();
         }
 
+        public async Task<Coffee> GetCoffeeById(string id)
+        {
+            return await _coffeeCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
 
         public async Task DeleteAsync(string id)
         {

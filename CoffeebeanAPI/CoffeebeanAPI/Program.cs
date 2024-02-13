@@ -11,6 +11,7 @@ builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("Mo
 builder.Services.AddSingleton<MongoDBService>();
 builder.Services.AddSingleton<MongoUserService>();
 builder.Services.AddSingleton<MongoShopService>();
+builder.Services.AddSingleton<MongoReviewService>();
 
 
 // JWT
